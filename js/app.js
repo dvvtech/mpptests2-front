@@ -71,6 +71,13 @@ const App = {
     // Масштабирование холста под экран устройства
     fitCanvasToScreen() {
         if (!this.canvas) return;
+
+        // Сохраняем текущее содержимое canvas
+        let savedImage = null;
+        if (this.canvas.width > 0 && this.canvas.height > 0) {
+            savedImage = this.canvas.toDataURL();
+        }
+
         const baseW = appConfig.canvasWidth;
         const baseH = appConfig.canvasHeight;
         // Доступная площадь: учитываем небольшие отступы
@@ -91,8 +98,17 @@ const App = {
         this.state.offsetX = 0;
         this.state.offsetY = 0;
         this.state.scale = 1;
-        // Используем внешний модуль CanvasModule для применения трансформаций
         CanvasModule.applyTransform();
+
+        // Восстанавливаем содержимое
+        if (savedImage) {
+            const img = new Image();
+            img.onload = () => {
+                // Масштабируем сохранённое изображение под новый размер
+                this.ctx.drawImage(img, 0, 0, w, h);
+            };
+            img.src = savedImage;
+        }
     },
 
     // ─── Navigation ────────────────────────────────────────────────
