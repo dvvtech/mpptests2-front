@@ -1,0 +1,84 @@
+<div id="settings-page" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="max-w-2xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500 rounded-2xl shadow-lg mb-4">
+                <i class="fas fa-brain text-white text-2xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800 leading-tight">
+                Медико-педагого-психологические<br>тесты Яшара Ибадова
+            </h1>
+            <p class="text-gray-500 mt-2 text-sm">Для анализа тестов требуется заполнить поля</p>
+        </div>
+
+        <!-- Personal info card -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-5">
+            <h2 class="text-lg font-semibold text-gray-800 mb-5 flex items-center gap-2">
+                <i class="fas fa-user text-blue-400"></i>
+                Личные данные
+            </h2>
+
+            <!-- Gender -->
+            <div class="mb-4">
+                <label for="gender-select" class="block text-sm font-medium text-gray-700 mb-1">Пол</label>
+                <select id="gender-select"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition">
+                    <option value="">— Выберите пол —</option>
+                    <option value="male">Мужской</option>
+                    <option value="female">Женский</option>
+                </select>
+                <p id="gender-error" class="error-msg" style="display:none;">
+                    <i class="fas fa-exclamation-circle"></i> Пожалуйста, выберите пол
+                </p>
+            </div>
+
+            <!-- Birthdate -->
+            <div>
+                <label for="birthdate-input" class="block text-sm font-medium text-gray-700 mb-1">Дата рождения</label>
+                <input type="date" id="birthdate-input"
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition"
+                    max="">
+                <p id="birthdate-error" class="error-msg" style="display:none;">
+                    <i class="fas fa-exclamation-circle"></i> Пожалуйста, укажите дату рождения
+                </p>
+            </div>
+        </div>
+
+        <!-- Test selection card -->
+        <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+            <h2 class="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
+                <i class="fas fa-palette text-blue-400"></i>
+                Выбор теста
+            </h2>
+            <p class="text-xs text-gray-400 mb-4">Нажмите на тест, чтобы выбрать его для раскрашивания</p>
+
+            <div class="grid grid-cols-2 gap-3" id="image-selector">
+                <!-- Tests will be added dynamically -->
+            </div>
+
+            <p id="test-error" class="error-msg mt-3" style="display:none;">
+                <i class="fas fa-exclamation-circle"></i> Пожалуйста, выберите тест
+            </p>
+        </div>
+
+        <!-- Next button -->
+        <button id="next-btn"
+            class="w-full py-3.5 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition text-base flex items-center justify-center gap-2">
+            Далее
+            <i class="fas fa-arrow-right"></i>
+        </button>
+
+    </div>
+</div>
+
+<script>
+    // Set max date to today
+    (function() {
+        const bd = document.getElementById('birthdate-input');
+        if (bd) {
+            const today = new Date().toISOString().split('T')[0];
+            bd.max = today;
+        }
+    })();
+</script>
