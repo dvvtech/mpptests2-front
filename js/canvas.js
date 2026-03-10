@@ -42,10 +42,25 @@ const CanvasModule = {
         const rect   = canvas.getBoundingClientRect();
         const scaleX = canvas.width  / rect.width;
         const scaleY = canvas.height / rect.height;
-        return {
-            x: (e.clientX - rect.left) * scaleX,
-            y: (e.clientY - rect.top)  * scaleY
-        };
+        // Raw coordinates in canvas space before considering rotation
+        let x = (e.clientX - rect.left) * scaleX;
+        let y = (e.clientY - rect.top)  * scaleY;
+
+        // If canvas is rotated via CSS, map screen coords back to canvas coords
+        const angle = App.state.rotation % 360;
+        if (angle !== 0) {
+            const cx = App.canvas.width  / 2;
+            const cy = App.canvas.height / 2;
+            const rad = -angle * Math.PI / 180;
+            const dx = x - cx;
+            const dy = y - cy;
+            const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
+            const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
+            x = cx + rx;
+            y = cy + ry;
+        }
+
+        return { x, y };
     },
 
     // ─── Mouse events ─────────────────────────────────────────────
@@ -143,10 +158,23 @@ const CanvasModule = {
         const rect   = canvas.getBoundingClientRect();
         const scaleX = canvas.width  / rect.width;
         const scaleY = canvas.height / rect.height;
-        return {
-            x: (touch.clientX - rect.left) * scaleX,
-            y: (touch.clientY - rect.top)  * scaleY
-        };
+        let x = (touch.clientX - rect.left) * scaleX;
+        let y = (touch.clientY - rect.top)  * scaleY;
+
+        const angle = App.state.rotation % 360;
+        if (angle !== 0) {
+            const cx = App.canvas.width  / 2;
+            const cy = App.canvas.height / 2;
+            const rad = -angle * Math.PI / 180;
+            const dx = x - cx;
+            const dy = y - cy;
+            const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
+            const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
+            x = cx + rx;
+            y = cy + ry;
+        }
+
+        return { x, y };
     },
 
     // ─── Wheel zoom ────────────────────────────────────────────────

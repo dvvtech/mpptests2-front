@@ -58,6 +58,41 @@ const App = {
 
     init() {
         this.initSettings();
+        // Подключаем обработчики адаптивности
+        window.addEventListener('resize', () => {
+            // Пересчитать размер холста, если активна страница раскрашивания
+            const coloringEl = document.getElementById('coloring');
+            if (coloringEl && coloringEl.style.display !== 'none') {
+                this.fitCanvasToScreen();
+            }
+        });
+    },
+
+    // Масштабирование холста под экран устройства
+    fitCanvasToScreen() {
+        if (!this.canvas) return;
+        const baseW = appConfig.canvasWidth;
+        const baseH = appConfig.canvasHeight;
+        // Доступная площадь: учитываем небольшие отступы
+        const availableW = Math.max(320, window.innerWidth - 40);
+        const availableH = Math.max(240, window.innerHeight - 240);
+
+        const scale = Math.min(availableW / baseW, availableH / baseH, 1);
+        const w = Math.floor(baseW * scale);
+        const h = Math.floor(baseH * scale);
+
+        // Привязать физические размеры канваса к вычисленному размеру
+        this.canvas.style.width = w + 'px';
+        this.canvas.style.height = h + 'px';
+        this.canvas.width = w;
+        this.canvas.height = h;
+
+        // Обнуляем трансформации и заново применяем
+        this.state.offsetX = 0;
+        this.state.offsetY = 0;
+        this.state.scale = 1;
+        // Используем внешний модуль CanvasModule для применения трансформаций
+        CanvasModule.applyTransform();
     },
 
     // ─── Navigation ────────────────────────────────────────────────
@@ -303,8 +338,8 @@ const App = {
         if (!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
 
-        this.canvas.width  = appConfig.canvasWidth;
-        this.canvas.height = appConfig.canvasHeight;
+        // Подогнать холст под экран устройства
+        this.fitCanvasToScreen();
 
         // Reset state
         this.state.rotation  = 0;
