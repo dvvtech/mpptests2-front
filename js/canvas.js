@@ -40,25 +40,33 @@ const CanvasModule = {
     getCanvasPos(e) {
         const canvas = App.canvas;
         const rect   = canvas.getBoundingClientRect();
-        const scaleX = canvas.width  / rect.width;
-        const scaleY = canvas.height / rect.height;
-        // Raw coordinates in canvas space before considering rotation
-        let x = (e.clientX - rect.left) * scaleX;
-        let y = (e.clientY - rect.top)  * scaleY;
 
-        // If canvas is rotated via CSS, map screen coords back to canvas coords
+        // Center of transformed canvas on screen
+        const screenCenterX = rect.left + rect.width / 2;
+        const screenCenterY = rect.top + rect.height / 2;
+
+        // Offset from screen center
+        let dx = e.clientX - screenCenterX;
+        let dy = e.clientY - screenCenterY;
+
+        // Inverse rotation (opposite direction)
         const angle = App.state.rotation % 360;
         if (angle !== 0) {
-            const cx = App.canvas.width  / 2;
-            const cy = App.canvas.height / 2;
             const rad = -angle * Math.PI / 180;
-            const dx = x - cx;
-            const dy = y - cy;
-            const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
-            const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
-            x = cx + rx;
-            y = cy + ry;
+            const rdx = dx * Math.cos(rad) - dy * Math.sin(rad);
+            const rdy = dx * Math.sin(rad) + dy * Math.cos(rad);
+            dx = rdx;
+            dy = rdy;
         }
+
+        // Inverse scale
+        const s = App.state.scale;
+        dx /= s;
+        dy /= s;
+
+        // Convert to canvas coordinates
+        const x = canvas.width / 2 + dx;
+        const y = canvas.height / 2 + dy;
 
         return { x, y };
     },
@@ -156,23 +164,33 @@ const CanvasModule = {
     getTouchCanvasPos(touch) {
         const canvas = App.canvas;
         const rect   = canvas.getBoundingClientRect();
-        const scaleX = canvas.width  / rect.width;
-        const scaleY = canvas.height / rect.height;
-        let x = (touch.clientX - rect.left) * scaleX;
-        let y = (touch.clientY - rect.top)  * scaleY;
 
+        // Center of transformed canvas on screen
+        const screenCenterX = rect.left + rect.width / 2;
+        const screenCenterY = rect.top + rect.height / 2;
+
+        // Offset from screen center
+        let dx = touch.clientX - screenCenterX;
+        let dy = touch.clientY - screenCenterY;
+
+        // Inverse rotation (opposite direction)
         const angle = App.state.rotation % 360;
         if (angle !== 0) {
-            const cx = App.canvas.width  / 2;
-            const cy = App.canvas.height / 2;
             const rad = -angle * Math.PI / 180;
-            const dx = x - cx;
-            const dy = y - cy;
-            const rx = dx * Math.cos(rad) - dy * Math.sin(rad);
-            const ry = dx * Math.sin(rad) + dy * Math.cos(rad);
-            x = cx + rx;
-            y = cy + ry;
+            const rdx = dx * Math.cos(rad) - dy * Math.sin(rad);
+            const rdy = dx * Math.sin(rad) + dy * Math.cos(rad);
+            dx = rdx;
+            dy = rdy;
         }
+
+        // Inverse scale
+        const s = App.state.scale;
+        dx /= s;
+        dy /= s;
+
+        // Convert to canvas coordinates
+        const x = canvas.width / 2 + dx;
+        const y = canvas.height / 2 + dy;
 
         return { x, y };
     },
